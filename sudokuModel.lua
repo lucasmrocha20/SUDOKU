@@ -12,8 +12,8 @@ function criarSudoku ()
 end
 
 function posicaoLivre()
-    for i = 1, #sudoku do
-        for j = 1, #sudoku do
+    for i = 1, 9 do
+        for j = 1, 9 do
             if(sudoku[i][j].valor == 0) then
                 return true
             end
@@ -23,7 +23,7 @@ function posicaoLivre()
 end
 
 function checarPosicao(i, j)
-    if(i >= 1 and i <= #sudoku and j >= 1 and j <= #sudoku) then 
+    if(i >= 1 and i <= 9 and j >= 1 and j <= 9) then 
         if(sudoku[i][j].valor ~= 0) then
             return false
         else
@@ -63,8 +63,8 @@ function novoValor()
 end
 
 function naoExiste(valor)
-    for i = 1, #sudoku do
-        for j = 1, #sudoku do
+    for i = 1, 9 do
+        for j = 1, 9 do
             if(sudoku[i][j].valor == valor) then
                 return false
             end
@@ -90,8 +90,8 @@ function adicionar(i,j)
 end
 
 function valorInvalido(lin, col)
-    for i = 1, #sudoku do
-        for j = 1, #sudoku do
+    for i = 1, 9 do
+        for j = 1, 9 do
             if(sudoku[i][j].valor == sudoku[lin][col].valor)then
                 if(i == lin and col == j) then
                 else
@@ -104,8 +104,8 @@ function valorInvalido(lin, col)
 end
 
 function verificar()
-    for i = 1, #sudoku do
-        for j = 1, #sudoku do
+    for i = 1, 9 do
+        for j = 1, 9 do
             if(valorInvalido(i,j)) then
                 return false
             end
@@ -120,8 +120,8 @@ function novoSudoku(tamanho)
 end
 
 function mostrar()
-    for i = 1, #sudoku do
-        for j = 1, #sudoku do
+    for i = 1, 9 do
+        for j = 1, 9 do
             io.write('['..sudoku[i][j].valor..']')
         end
         io.write('\n')
