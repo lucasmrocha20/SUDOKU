@@ -6,30 +6,36 @@ colors = {
 }
 --variaveis
 tableChanged = false
+canClick = false
 
 local background = display.newRect(display.contentCenterX, display.contentCenterY, 800, 800)
 background.fill = colors.gray
 
 tableGroup = display.newGroup()
-tableGroup.x, tableGroup.y = -3, 30
+tableGroup.x, tableGroup.y = -3, -15
 
-tableRect = display.newRoundedRect(tableGroup, 130, 270, 400, 400, 5)
+tableRect = display.newRect(tableGroup, 165, 245, 330, 335)
 tableRect.fill = colors.turquesa
 
-showMsg = display.newText('', 165, 80, "sudokuFont", 20)
+showMsg = display.newText('', 165, 40, "sudokuFont", 20)
 showMsg:setFillColor(26/255, 188/255, 156/255)
 
 function avaliate( event )
-    avaliated = false
-    if(tableChanged) then
-        if(posicaoLivre()) then
-            msg = 'preencha todos os campos'
-        else
-            avaliated = verificar()
-            msg = avaliated and 'sudoku concluído parabéns' or 'Existem valores duplicados'
+    if(canClick) then
+        avaliated = false
+        if(tableChanged) then
+            if(posicaoLivre()) then
+                msg = 'preencha todos os campos'
+            else
+                avaliated = verificar()
+                msg = avaliated and 'sudoku concluído parabéns' or 'Existem valores duplicados'
+            end
+            showMsg.text = msg
+            showSudoku(sudoku, avaliated)
+            if(avaliated) then
+                canClick = false
+            end
         end
-        showMsg.text = msg
-        showSudoku(sudoku, avaliated)
     end
 end
 
@@ -39,8 +45,8 @@ function newText(group, x, y, text, value)
     rect.value = display.newText(value, x + group.x, y + group.y, "sudokuFont", 22)
     rect.value:setFillColor(26/255, 188/255, 156/255)
     if(text ~= nil) then
-        placarText = display.newText(text, x + group.x, group.y - 72, "sudokuFont", 30)
-        placarText:setFillColor(26/255, 188/255, 156/255)
+        campoText = display.newText(text, x + group.x, group.y - 72, "sudokuFont", 30)
+        campoText:setFillColor(26/255, 188/255, 156/255)
     else
         rect:addEventListener("touch", avaliate)
     end
@@ -49,7 +55,7 @@ end
 tabela = display.newText("SUD    KU", 157, -10, "sudokuFont", 50)
 tabela:setFillColor(26/255, 188/255, 156/255)
 
-local function rotateEfect()
+local function rotateEffect()
     if ( reverse == 0 ) then
         reverse = 1
         transition.to( newButton, { rotation=360, time=900, transition=easing.inOutCubic } )
@@ -61,10 +67,13 @@ end
 
 ---new game
 function newGame( event )
+    if(not(canClick)) then
+        canClick = true
+    end
     showMsg.text = ''
     novoSudoku(3)
     showSudoku(sudoku)
-    rotateEfect()
+    rotateEffect()
     tableChanged = false
 end
 --new game button
@@ -77,19 +86,21 @@ newButton:addEventListener("tap", newGame)
 
 -----------------------click--------------
 local function clickEvent( event )
-    if(not(tableChanged)) then
-        tableChanged = true
+    if(canClick) then
+        if(not(tableChanged)) then
+            tableChanged = true
+        end
+        i, j = event.target.i, event.target.j
+        adicionar(i,j)
+        showSudoku(sudoku)
     end
-    i, j = event.target.i, event.target.j
-    adicionar(i,j)
-    showSudoku(sudoku)
 end
 
 function newRect(group, i, j, x, y, width, height, color)
     local rect = nil
-        rect = display.newRoundedRect(group, x, y, width, height,5)
+        rect = display.newRoundedRect(group, x, y, width, height,2)
         rect.fill, rect.i, rect.j = color, i, j
-        rect.value = display.newText("", x + tableGroup.x, y + tableGroup.y, "sudokuFont", 30)
+        rect.value = display.newText("", x + tableGroup.x, y + tableGroup.y, "sudokuFont", 20)
         rect:addEventListener("tap", clickEvent)
         rect.value:setFillColor(0, 0.54, 0.54)
     return rect
@@ -103,7 +114,7 @@ function tableView()
         for j = 1, 9 do
             rect = newRect(tableGroup, i, j, posX + 35 * j, posY, pecaSize, pecaSize, colors.white)
         end
-        posY = posY + pecaSize + 9
+        posY = posY + pecaSize + 3
     end
 end
 tableView()
@@ -129,4 +140,4 @@ function showSudoku(sudoku, avaliated)
     end
 end
 
-newText(tableGroup, 160, 500, nil, "avaliar")
+newText(tableGroup, 160, 480, nil, "avaliar")
