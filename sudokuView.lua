@@ -24,7 +24,7 @@ function avaliate( event )
     if(canClick) then
         avaliated = false
         if(tableChanged) then
-            if(posicaoLivre()) then
+            if(sudoku:posicaoLivre()) then
                 msg = 'preencha todos os campos'
             else
                 avaliated = verificar()
@@ -67,11 +67,11 @@ end
 
 ---new game
 function newGame( event )
-    if(not(canClick)) then
+	if(not(canClick)) then
         canClick = true
     end
     showMsg.text = ''
-    novoSudoku(3)
+    sudoku:novo()
     showSudoku(sudoku)
     rotateEffect()
     tableChanged = false
@@ -86,14 +86,15 @@ newButton:addEventListener("tap", newGame)
 
 -----------------------click--------------
 local function clickEvent( event )
-    if(canClick) then
-        if(not(tableChanged)) then
-            tableChanged = true
+	if(canClick) then
+		if(not(tableChanged)) then
+			tableChanged = true
         end
-        i, j = event.target.i, event.target.j
-        adicionar(i,j)
-        showSudoku(sudoku)
-    end
+        showMsg.text = ''
+		i, j = event.target.i, event.target.j
+		sudoku:adicionar(i,j)
+		showSudoku(sudoku)
+	end
 end
 
 function newRect(group, i, j, x, y, width, height, color)
@@ -131,7 +132,7 @@ function showSudoku(sudoku, avaliated)
                 tableGroup[k].value.text = sudoku[i][j].valor
                 tableGroup[k].fill = colors.white
                 tableGroup[k].value:setFillColor(0, 0.54, 0.54)
-                if(valorInvalido(i, j) and avaliated == false) then
+                if(sudoku:valorInvalido(i, j) and avaliated == false) then
                     tableGroup[k].value:setFillColor(242/255, 9/255, 9/255)
                 end
             end
@@ -140,4 +141,4 @@ function showSudoku(sudoku, avaliated)
     end
 end
 
-newText(tableGroup, 160, 480, nil, "avaliar")
+newText(tableGroup, 160, 480, nil, "Avaliar")

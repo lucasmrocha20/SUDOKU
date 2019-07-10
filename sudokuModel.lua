@@ -1,47 +1,39 @@
+sudokuList = require 'sudokuList'
+
 math.randomseed(os.time())
 
 sudoku = {}
 
-function criarSudoku (tamanho)
+function sudoku:criar (tamanho)
     for i = 1, tamanho do
-        sudoku[i] = {}
+        self[i] = {}
         for j = 1, tamanho do
-            sudoku[i][j] = {valor = 0, constante = false}
+            self[i][j] = {valor = 0, constante = false}
         end
     end
 end
 
-function novoSudoku()
-    criarSudoku(9)
-    preenchimentoInicial(25)
+function sudoku:novo()
+    sudoku:criar(9)
+    sudoku:preenchimentoInicial()
 end
 
-function preenchimentoInicial(quantidade)
-    for i = 1, quantidade do
-        adicionarValor(true)
+function sudoku:preenchimentoInicial()
+    value = sudokuList[math.random(#sudokuList)] --seleciona aleatóriamente um sudoku da lista de sudokus
+    k = 1
+    for i = 1, #self do
+        for j = 1, #self do
+            self[i][j].valor = value[k]
+            self[i][j].constante = value[k] ~= 0 and true or false
+            k = k + 1
+        end
     end
 end
 
-function adicionarValor(constante)
-    continuar = false
-    repeat
-        linha = math.random(#sudoku)
-        coluna = math.random(#sudoku)
-        continuar = not(posicaoLivre())
-        if(checarPosicao(linha, coluna)) then
-            if(constante ~= nil) then
-                sudoku[linha][coluna].constante = constante
-            end
-                sudoku[linha][coluna].valor = novoValor(linha, coluna)               
-            continuar = true
-        end
-    until continuar
-end
-
-function posicaoLivre()
-    for i = 1, #sudoku do
-        for j = 1, #sudoku do
-            if(sudoku[i][j].valor == 0) then
+function sudoku:posicaoLivre() --verifica se existe alguma posição livre na matriz ou seja igual 0
+    for i = 1, #self do
+        for j = 1, #self do
+            if(self[i][j].valor == 0) then
                 return true
             end
         end
@@ -49,55 +41,10 @@ function posicaoLivre()
     return false
 end
 
-function checarPosicao(i, j) 
-    if(i >= 1 and i <= #sudoku and j >= 1 and j <= #sudoku) then 
-        if(sudoku[i][j].valor ~= 0) then
-            return false
-        else
-            return true
-        end
-    end
-end
-
-function novoValor(i, j)
-    continuar = false
-    repeat
-        valor = math.random(9)
-        if(valorValido(i, j, valor)) then
-            return valor
-        end
-    until continuar
-end
-
-function valorValido(i, j, valor)
-    if(linhaValida(i, valor) and colunaValida(j, valor)) then
-        return true
-    end
-    return false
-end
-
-function linhaValida (i, valor)
-    for j = 1, #sudoku do
-        if(sudoku[i][j].valor == valor) then
-            return false
-        end
-    end
-    return true
-end
-
-function colunaValida (j, valor)
-    for i = 1, #sudoku do
-        if(sudoku[i][j].valor == valor) then
-            return false
-        end
-    end
-    return true
-end
-
-function verificar()
-    for i = 1, #sudoku do
-        for j = 1, #sudoku do
-            if(valorInvalido(i,j)) then
+function sudoku:verificar()
+    for i = 1, #self do
+        for j = 1, #self do
+            if(sudoku:valorInvalido(i,j)) then
                 return false
             end
         end
@@ -105,17 +52,17 @@ function verificar()
     return  true
 end
 
-function valorInvalido(lin, col)
-    for i = 1, #sudoku do
-        if(sudoku[i][col].valor == sudoku[lin][col].valor) then
+function sudoku:valorInvalido(lin, col)
+    for i = 1, #self do
+        if(self[i][col].valor == self[lin][col].valor) then
             if(i == lin) then
             else
                 return true
             end
         end
     end
-    for j = 1, #sudoku do
-        if(sudoku[lin][j].valor == sudoku[lin][col].valor) then
+    for j = 1, #self do
+        if(self[lin][j].valor == self[lin][col].valor) then
             if(j == col) then
             else
                 return true
@@ -125,19 +72,19 @@ function valorInvalido(lin, col)
     return false
 end
 
-function adicionar(i,j)
-    if(not(sudoku[i][j].constante)) then
-        sudoku[i][j].valor = sudoku[i][j].valor + 1
-        if(sudoku[i][j].valor == 10) then
-            sudoku[i][j].valor = 0
+function sudoku:adicionar(i,j)
+    if(not(self[i][j].constante)) then
+        self[i][j].valor = self[i][j].valor + 1
+        if(self[i][j].valor == 10) then
+            self[i][j].valor = 0
         end
     end
 end
 
-function mostrar()
-    for i = 1, #sudoku do
-        for j = 1, #sudoku do
-            io.write(sudoku[i][j].valor == 0 and '[ ]' or '['..sudoku[i][j].valor..']')
+function sudoku:mostrar()
+    for i = 1, #self do
+        for j = 1, #self do
+            io.write(self[i][j].valor == 0 and '[ ]' or '['..self[i][j].valor..']')
         end
         io.write('\n')
     end
